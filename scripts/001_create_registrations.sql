@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.registrations (
   phone TEXT,
   organization TEXT,
   designation TEXT,
-  payment_status TEXT DEFAULT 'pending' CHECK (payment_status IN ('pending', 'completed', 'failed')),
+  payment_status TEXT DEFAULT 'pending',
   transaction_id TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -19,14 +19,10 @@ ALTER TABLE public.registrations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public registration" ON public.registrations
   FOR INSERT WITH CHECK (true);
 
--- Allow anyone to read their own registration by email
-CREATE POLICY "Allow read own registration" ON public.registrations
+-- Allow anyone to read registrations
+CREATE POLICY "Allow read registration" ON public.registrations
   FOR SELECT USING (true);
 
--- Allow updates to payment status
+-- Allow updates to registration
 CREATE POLICY "Allow update registration" ON public.registrations
   FOR UPDATE USING (true);
-
--- Create index for faster lookups
-CREATE INDEX IF NOT EXISTS idx_registrations_email ON public.registrations(email);
-CREATE INDEX IF NOT EXISTS idx_registrations_payment_status ON public.registrations(payment_status);
